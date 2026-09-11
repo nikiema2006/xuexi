@@ -2,7 +2,7 @@ import { DummyTab } from "@/components/helpers/DummyTab";
 import { ANIMATION_DURATION, EXPANDED_MENU_ITEMS, WIDTH } from "@/constants";
 import { styles } from "@/stylesheet";
 import { triggerHaptics } from "@/utils/trigger-haptics";
-import { useTheme } from "@react-navigation/native";
+import { useTheme } from "expo-router/react-navigation";
 import { BlurView } from "expo-blur";
 import * as Haptics from "expo-haptics";
 import React, { useEffect, useState } from "react";
@@ -222,7 +222,7 @@ export const LinearTabBar: React.FC<LinearTabBarProps> = ({
                       key={route.key}
                       isFocused={isFocused}
                       options={options}
-                      colors={colors}
+                      colors={{ primary: colors.primary as string, text: colors.text as string } }
                       onPress={onPress}
                       onLongPress={onLongPress}
                       animationProgress={animationProgress}
@@ -233,7 +233,7 @@ export const LinearTabBar: React.FC<LinearTabBarProps> = ({
                 <DummyTab
                   onPress={onLinearTabPress}
                   animationProgress={animationProgress}
-                  colors={colors}
+                  colors={{ primary: colors.primary as string, text: colors.text as string }}
                 />
               </Animated.View>
             </BlurView>
