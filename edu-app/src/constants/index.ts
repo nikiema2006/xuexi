@@ -10,9 +10,6 @@ const SPRING_CONFIG = {
 };
 
 const EXPANDED_MENU_ITEMS: ExpandedMenuItem[] = [
-  { iconName: "home", label: "Accueil", route: "index" },
-  { iconName: "library", label: "Ressources", route: "resource" },
-  { iconName: "chatbubble", label: "Messagerie", route: "messagerie" },
   { iconName: "bar-chart", label: "Statistiques", route: "statistique" },
   { iconName: "person", label: "Profil", route: "profile" },
   { iconName: "settings", label: "Paramètres", route: "parametres" },

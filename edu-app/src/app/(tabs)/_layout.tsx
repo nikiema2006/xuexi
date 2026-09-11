@@ -5,19 +5,19 @@ import { Tabs } from "expo-router/tabs";
 import React, { useState } from "react";
 import {
   Appearance,
-  Platform,
   Pressable,
   StyleSheet,
-  View,
 } from "react-native";
 import Animated, {
+  Easing,
   runOnJS,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
-  withSpring,
   withTiming,
 } from "react-native-reanimated";
+
+const ANIMATION_DURATION = 400;
 
 Appearance.setColorScheme("dark");
 
@@ -27,32 +27,46 @@ enum TabAnimationName {
 }
 
 export default function TabLayout(): React.ReactNode {
-  const blurOpacity = useSharedValue(0);
-  const blurScale = useSharedValue(0.95);
+  const animationProgress = useSharedValue(0);
+  const overlayOpacity = useSharedValue(0);
   const [pointerEvents, setPointerEvents] = useState<"auto" | "none">("none");
 
   useDerivedValue(() => {
-    const shouldEnable = blurOpacity.value > 0.01;
+    const shouldEnable = animationProgress.value > 0.01;
     runOnJS(setPointerEvents)(shouldEnable ? "auto" : "none");
   });
 
-  const handleLinearTabPress = () => {
-    blurOpacity.value = withTiming(1, { duration: 300 });
-    blurScale.value = withSpring(1, {
-      damping: 15,
-      stiffness: 150,
+  const openMenu = () => {
+    animationProgress.value = withTiming(1, {
+      duration: ANIMATION_DURATION,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
     });
+    overlayOpacity.value = withTiming(1, { duration: 300 });
+  };
+
+  const closeMenu = () => {
+    animationProgress.value = withTiming(0, {
+      duration: ANIMATION_DURATION,
+      easing: Easing.bezier(0.25, 0.1, 0.25, 1),
+    });
+    overlayOpacity.value = withTiming(0, { duration: 200 });
+  };
+
+  const handleLinearTabPress = () => {
+    if (animationProgress.value === 0) {
+      openMenu();
+    } else {
+      closeMenu();
+    }
   };
 
   const handleMenuItemPress = () => {
-    blurOpacity.value = withTiming(0, { duration: 200 });
-    blurScale.value = withTiming(0.95, { duration: 200 });
+    closeMenu();
   };
 
-  const animatedBlurStyle = useAnimatedStyle(() => {
+  const animatedOverlayStyle = useAnimatedStyle(() => {
     return {
-      opacity: blurOpacity.value,
-      transform: [{ scale: blurScale.value }],
+      opacity: overlayOpacity.value,
     };
   });
 
@@ -60,28 +74,18 @@ export default function TabLayout(): React.ReactNode {
     <>
       <Tabs
         tabBar={(props) => (
-          <>
-            {Platform.OS === "ios" ? (
-              <View style={{ zIndex: 1000 }}>
-                <LinearTabBar
-                  {...props}
-                  onLinearTabPress={handleLinearTabPress}
-                  onMenuItemPress={handleMenuItemPress}
-                />
-              </View>
-            ) : (
-              <LinearTabBar
-                {...props}
-                onLinearTabPress={handleLinearTabPress}
-                onMenuItemPress={handleMenuItemPress}
-              />
-            )}
-          </>
+          <LinearTabBar
+            {...props}
+            animationProgress={animationProgress}
+            onLinearTabPress={handleLinearTabPress}
+            onMenuItemPress={handleMenuItemPress}
+          />
         )}
         screenOptions={{
           headerShown: false,
-          animation: TabAnimationName.Fade,
+          animation: TabAnimationName.Shift,
         }}
+        detachInactiveScreens={false}
       >
         {/* Visible tabs */}
         <Tabs.Screen
@@ -146,24 +150,20 @@ export default function TabLayout(): React.ReactNode {
           }}
         />
       </Tabs>
-      {Platform.OS === "ios" ? (
-        <Animated.View
-          style={[styles.blurOverlay, animatedBlurStyle]}
-          pointerEvents={pointerEvents}
-        >
-          <Pressable style={styles.blurPressable} onPress={handleMenuItemPress}>
-            <BlurView intensity={80} tint="dark" style={styles.blurView}>
-              <View style={styles.blurContent} />
-            </BlurView>
-          </Pressable>
-        </Animated.View>
-      ) : null}
+      <Animated.View
+        style={[styles.overlay, animatedOverlayStyle]}
+        pointerEvents={pointerEvents}
+      >
+        <Pressable style={styles.overlayPressable} onPress={closeMenu}>
+          <BlurView tint="dark" intensity={60} style={styles.overlayBlur} />
+        </Pressable>
+      </Animated.View>
     </>
   );
 }
 
 const styles = StyleSheet.create({
-  blurOverlay: {
+  overlay: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -171,15 +171,10 @@ const styles = StyleSheet.create({
     bottom: 0,
     zIndex: 100,
   },
-  blurPressable: {
+  overlayPressable: {
     flex: 1,
   },
-  blurView: {
+  overlayBlur: {
     flex: 1,
-  },
-  blurContent: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

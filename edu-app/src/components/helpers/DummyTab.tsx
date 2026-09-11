@@ -1,14 +1,11 @@
-import { ANIMATION_DURATION } from "@/constants";
 import { DummyTabProps } from "@/typings";
 import { triggerHaptics } from "@/utils/trigger-haptics";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import Animated, {
-  Easing,
   Extrapolation,
   interpolate,
   useAnimatedStyle,
-  withTiming,
 } from "react-native-reanimated";
 import { styles } from "@/stylesheet";
 
@@ -18,19 +15,8 @@ const DummyTab: React.FC<DummyTabProps> = ({
   onPress: onDummyPress,
 }) => {
   const onPress = (): void => {
-    onDummyPress!();
     triggerHaptics("soft");
-    if (animationProgress.value === 0) {
-      animationProgress.value = withTiming(1, {
-        duration: ANIMATION_DURATION,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
-    } else {
-      animationProgress.value = withTiming(0, {
-        duration: ANIMATION_DURATION,
-        easing: Easing.bezier(0.25, 0.1, 0.25, 1),
-      });
-    }
+    onDummyPress!();
   };
 
   const animatedIconStyle = useAnimatedStyle(() => {

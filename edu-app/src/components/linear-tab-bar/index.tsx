@@ -21,6 +21,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import type { SharedValue } from "react-native-reanimated";
 import { AnimatedTab } from "../helpers/AnimatedTab";
 import { ExpandedMenuItems } from "../helpers/ExpandedMenuItem";
 
@@ -28,6 +29,7 @@ interface LinearTabBarProps {
   state: any;
   descriptors: any;
   navigation: any;
+  animationProgress: SharedValue<number>;
   onLinearTabPress?: () => void | any;
   onMenuItemPress?: (index: number) => void | any;
 }
@@ -36,11 +38,11 @@ export const LinearTabBar: React.FC<LinearTabBarProps> = ({
   state,
   descriptors,
   navigation,
+  animationProgress,
   onLinearTabPress = () => {},
   onMenuItemPress = (index: number) => {},
 }) => {
   const { colors } = useTheme();
-  const animationProgress = useSharedValue(0);
   const [selectedMenuIndex, setSelectedMenuIndex] = useState<number>(2);
   const startY = useSharedValue(0);
   const translationY = useSharedValue(0);
@@ -181,7 +183,7 @@ export const LinearTabBar: React.FC<LinearTabBarProps> = ({
               animatedTabBarStyle,
             ]}
           >
-            <BlurView tint="systemThickMaterialDark" style={styles.blurView}>
+            <BlurView tint="dark" intensity={80} style={styles.blurView}>
               <View style={styles.expandedMenu}>
                 {EXPANDED_MENU_ITEMS.map((item, index) => (
                   <ExpandedMenuItems

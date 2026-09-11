@@ -9,6 +9,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { styles } from "@/stylesheet";
+import { BlurView } from "expo-blur";
 
 const ExpandedMenuItems: React.FC<ExpandedMenuItemProps> = ({
   item,

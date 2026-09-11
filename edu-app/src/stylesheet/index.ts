@@ -6,6 +6,7 @@ const styles = StyleSheet.create({
     bottom: 30,
     left: 20,
     right: 20,
+    zIndex: 1000,
   },
   container: {},
   floatingBarWrapper: {
@@ -17,11 +18,10 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     justifyContent: "flex-end",
-    backgroundColor: "transparent",
   },
   expandedMenu: {
     flex: 1,
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingTop: 10,
     paddingBottom: 8,
     justifyContent: "space-evenly",
