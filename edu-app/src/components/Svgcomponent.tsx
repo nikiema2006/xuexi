@@ -6,20 +6,18 @@ interface SVGComponentProps extends SvgProps {
 }
 
 // #new Wrapped with React.memo for performance optimization
-const SVGComponent = React.memo(({ fill = "#000", ...props }: SVGComponentProps) => (
-  <Svg
-  //  xmlns="http://www.w3.org/2000/svg"
-    viewBox="-0.1 -0.1 230.2 100.2"
-    preserveAspectRatio="xMidYMid meet"
-    {...props}
-  >
-    <Path
-      d="M 0 0 T 0 100 L 25 100 C 186 100 54 13 230 0"
-      stroke="#111"
-      strokeWidth={0.1}
-      fill={fill}
-    />
-  </Svg>
+const SVGComponent = React.memo(({ fill = "#ffffffff", ...props }: SVGComponentProps) => (
+<Svg
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 418 300"
+    width={418}
+    height={300}
+    >  
+	<Path
+     d="M 0 0 V 300 H 168 Q 230 300 259 279 L 280 259 Q 310 230 341 230 H 420 V 0" 
+     fill={fill} 
+     />
+</Svg>
 ));
 
 // #new Add display name for debugging
